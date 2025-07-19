@@ -9,11 +9,20 @@ This document describes WordMixr's comprehensive CI/CD pipeline built with GitHu
 - Improved upload/download speeds by up to 98% compared to v3
 - Future-proofed against the [v3 deprecation](https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/) (effective January 30, 2025)
 
+**🤖 Added Dependabot Integration** (December 2024)
+- Automated dependency management for all package ecosystems
+- Weekly scans for npm, pip, Docker, and GitHub Actions dependencies
+- Grouped updates and security vulnerability alerts
+- See [`docs/DEPENDABOT.md`](DEPENDABOT.md) for detailed configuration
+
 ## Overview
 
-WordMixr uses a two-stage pipeline approach:
+WordMixr uses a comprehensive automation approach:
 1. **Continuous Integration (CI)** - Runs on every PR and push to main
 2. **Continuous Deployment (CD)** - Triggers on version tags for automated releases
+3. **Automated Dependency Management** - Dependabot maintains up-to-date dependencies
+
+For dependency management details, see [Dependabot Configuration](DEPENDABOT.md).
 
 ## Continuous Integration (.github/workflows/ci.yml)
 

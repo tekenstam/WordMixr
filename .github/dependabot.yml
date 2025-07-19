@@ -1,0 +1,149 @@
+version: 2
+updates:
+  # Frontend dependencies (npm)
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "tekenstam"  # Replace with your GitHub username
+    assignees:
+      - "tekenstam"  # Replace with your GitHub username
+    commit-message:
+      prefix: "frontend"
+      prefix-development: "frontend-dev"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "frontend"
+      - "npm"
+    # Group minor and patch updates together
+    groups:
+      development-dependencies:
+        dependency-type: "development"
+        patterns:
+          - "@*"
+          - "eslint*"
+          - "prettier*"
+          - "@types/*"
+          - "vitest*"
+          - "@vitest/*"
+          - "typescript"
+      production-dependencies:
+        dependency-type: "production"
+        patterns:
+          - "react*"
+          - "vite*"
+          - "axios*"
+
+  # Backend dependencies (Python pip)
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "tekenstam"  # Replace with your GitHub username
+    assignees:
+      - "tekenstam"  # Replace with your GitHub username
+    commit-message:
+      prefix: "backend"
+      prefix-development: "backend-dev"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "backend"
+      - "python"
+    # Group related dependencies
+    groups:
+      fastapi-dependencies:
+        patterns:
+          - "fastapi*"
+          - "uvicorn*"
+          - "pydantic*"
+      testing-dependencies:
+        patterns:
+          - "pytest*"
+          - "httpx"
+          - "coverage"
+      linting-dependencies:
+        patterns:
+          - "black"
+          - "isort"
+          - "flake8"
+          - "mypy"
+          - "bandit"
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 2
+    reviewers:
+      - "tekenstam"  # Replace with your GitHub username
+    assignees:
+      - "tekenstam"  # Replace with your GitHub username
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "frontend"
+
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 2
+    reviewers:
+      - "tekenstam"  # Replace with your GitHub username
+    assignees:
+      - "tekenstam"  # Replace with your GitHub username
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "backend"
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "11:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "tekenstam"  # Replace with your GitHub username
+    assignees:
+      - "tekenstam"  # Replace with your GitHub username
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "ci-cd"
+    groups:
+      actions-dependencies:
+        patterns:
+          - "actions/*"
+          - "docker/*" 

@@ -4,6 +4,7 @@
 [![Release](https://github.com/yourusername/wordmixr/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/wordmixr/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Artifact Actions](https://img.shields.io/badge/GitHub%20Actions-Artifact%20v4-green.svg)](https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/)
+[![Dependabot](https://img.shields.io/badge/Dependabot-Enabled-brightgreen.svg)](https://github.com/dependabot)
 
 A full-stack web application for solving word puzzles by finding all possible words from scrambled letters. Optimized for popular word games like Word Cookies.
 
@@ -46,6 +47,17 @@ docker-compose up --build
 3. **Click "Solve Words"** to find all possible words
 4. **Click words** to mark them as found (they'll move to bottom and grey out)
 5. **Try "Find Anagrams"** for exact letter matches
+
+## 🤖 Automated Dependency Management
+
+WordMixr uses **Dependabot** to automatically keep dependencies up-to-date:
+
+- **📦 Frontend**: npm packages (React, TypeScript, Vite)
+- **🐍 Backend**: Python packages (FastAPI, Pydantic)
+- **🐳 Docker**: Base images and Docker actions
+- **⚡ GitHub Actions**: Workflow dependencies
+
+Dependabot runs weekly and creates PRs for security updates and version bumps. See [`docs/DEPENDABOT.md`](docs/DEPENDABOT.md) for detailed configuration.
 
 ## Common Commands
 
