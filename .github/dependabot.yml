@@ -146,4 +146,4 @@ updates:
       actions-dependencies:
         patterns:
           - "actions/*"
-          - "docker/*" 
+          - "docker/*"
