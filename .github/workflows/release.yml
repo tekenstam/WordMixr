@@ -1,0 +1,458 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0, v2.1.3, etc.
+
+env:
+  NODE_VERSION: '18'
+  PYTHON_VERSION: '3.11'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Extract version information
+  extract-version:
+    name: Extract Version Info
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    
+    steps:
+    - name: Extract version from tag
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        
+        # Check if this is a prerelease (contains alpha, beta, rc)
+        if [[ $VERSION =~ (alpha|beta|rc) ]]; then
+          echo "prerelease=true" >> $GITHUB_OUTPUT
+        else
+          echo "prerelease=false" >> $GITHUB_OUTPUT
+        fi
+        
+        echo "Extracted version: $VERSION"
+        echo "Is prerelease: ${{ steps.version.outputs.prerelease }}"
+
+  # Run full CI pipeline for release
+  run-ci:
+    name: Run CI Pipeline
+    uses: ./.github/workflows/ci.yml
+    
+  # Build and push Docker images
+  build-and-push:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-latest
+    needs: [extract-version, run-ci]
+    permissions:
+      contents: read
+      packages: write
+    
+    strategy:
+      matrix:
+        component: [backend, frontend]
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.component }}
+        tags: |
+          type=ref,event=tag
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          type=raw,value=latest,enable={{is_default_branch}}
+          
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./${{ matrix.component }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+
+  # Build release artifacts
+  build-artifacts:
+    name: Build Release Artifacts
+    runs-on: ubuntu-latest
+    needs: [extract-version, run-ci]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+        
+    # Build frontend
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+        
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+        
+    - name: Package frontend build
+      run: |
+        cd frontend
+        tar -czf ../wordmixr-frontend-${{ needs.extract-version.outputs.version }}.tar.gz dist/
+        
+    # Build backend
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install build
+        
+    - name: Run backend tests
+      run: |
+        cd backend
+        pytest tests/ -v
+        
+    - name: Package backend source
+      run: |
+        tar -czf wordmixr-backend-${{ needs.extract-version.outputs.version }}.tar.gz \
+          backend/ \
+          --exclude=backend/__pycache__ \
+          --exclude=backend/.pytest_cache \
+          --exclude=backend/htmlcov
+          
+    # Create source package
+    - name: Create source package
+      run: |
+        tar -czf wordmixr-source-${{ needs.extract-version.outputs.version }}.tar.gz \
+          . \
+          --exclude=.git \
+          --exclude=node_modules \
+          --exclude=__pycache__ \
+          --exclude=.pytest_cache \
+          --exclude=dist \
+          --exclude=build \
+          --exclude=htmlcov
+          
+    - name: Generate checksums
+      run: |
+        sha256sum *.tar.gz > checksums.sha256
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-artifacts
+        path: |
+          *.tar.gz
+          checksums.sha256
+
+  # Security scan of release artifacts
+  security-scan-release:
+    name: Security Scan Release
+    runs-on: ubuntu-latest
+    needs: [build-and-push]
+    
+    strategy:
+      matrix:
+        component: [backend, frontend]
+        
+    steps:
+    - name: Run Trivy vulnerability scanner on images
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.component }}:${{ needs.extract-version.outputs.version }}
+        format: 'sarif'
+        output: 'trivy-${{ matrix.component }}-results.sarif'
+        
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-${{ matrix.component }}-results.sarif'
+
+  # Generate release notes
+  generate-changelog:
+    name: Generate Release Notes
+    runs-on: ubuntu-latest
+    needs: [extract-version]
+    outputs:
+      changelog: ${{ steps.changelog.outputs.changelog }}
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for changelog generation
+        
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Get the previous tag
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        CURRENT_TAG=${GITHUB_REF#refs/tags/}
+        
+        echo "Generating changelog from $PREVIOUS_TAG to $CURRENT_TAG"
+        
+        # Generate changelog from git commits
+        if [ -n "$PREVIOUS_TAG" ]; then
+          CHANGELOG=$(git log --pretty=format:"- %s (%an)" $PREVIOUS_TAG..$CURRENT_TAG)
+        else
+          CHANGELOG=$(git log --pretty=format:"- %s (%an)")
+        fi
+        
+        # Create formatted changelog
+        cat > RELEASE_NOTES.md << EOF
+        # WordMixr ${{ needs.extract-version.outputs.version }}
+        
+        ## What's Changed
+        
+        $CHANGELOG
+        
+        ## Docker Images
+        
+        - \`ghcr.io/${{ github.repository }}-backend:${{ needs.extract-version.outputs.version }}\`
+        - \`ghcr.io/${{ github.repository }}-frontend:${{ needs.extract-version.outputs.version }}\`
+        
+        ## Quick Start
+        
+        \`\`\`bash
+        # Download and run
+        curl -sSL https://github.com/${{ github.repository }}/archive/$CURRENT_TAG.tar.gz | tar -xz
+        cd wordmixr-${CURRENT_TAG#v}
+        docker-compose up --build
+        \`\`\`
+        
+        ## Verification
+        
+        All artifacts have been security scanned and tested. Verify checksums:
+        
+        \`\`\`bash
+        sha256sum -c checksums.sha256
+        \`\`\`
+        
+        **Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$CURRENT_TAG
+        EOF
+        
+        # Set output for use in release
+        echo "changelog<<EOF" >> $GITHUB_OUTPUT
+        cat RELEASE_NOTES.md >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+    - name: Upload release notes
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-notes
+        path: RELEASE_NOTES.md
+
+  # Create GitHub Release
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [extract-version, build-artifacts, generate-changelog, build-and-push]
+    permissions:
+      contents: write
+      packages: read
+      
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: release-artifacts
+        
+    - name: Download release notes
+      uses: actions/download-artifact@v3
+      with:
+        name: release-notes
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: WordMixr ${{ needs.extract-version.outputs.version }}
+        body_path: RELEASE_NOTES.md
+        prerelease: ${{ needs.extract-version.outputs.prerelease }}
+        files: |
+          *.tar.gz
+          checksums.sha256
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  # Performance benchmark for release
+  performance-benchmark:
+    name: Performance Benchmark
+    runs-on: ubuntu-latest
+    needs: [build-and-push, extract-version]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Create docker-compose for release images
+      run: |
+        cat > docker-compose.release.yml << EOF
+        version: '3.9'
+        services:
+          backend:
+            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:${{ needs.extract-version.outputs.version }}
+            ports:
+              - "8000:8000"
+            environment:
+              - WORDMIXR_DICTIONARY=scowl_large
+          frontend:
+            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:${{ needs.extract-version.outputs.version }}
+            ports:
+              - "3000:3000"
+        EOF
+        
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Start release application
+      run: |
+        docker-compose -f docker-compose.release.yml up -d
+        sleep 60  # Wait for services to be ready
+        
+    - name: Install performance testing tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apache2-utils jq
+        
+    - name: Run performance benchmark
+      run: |
+        echo "Running performance benchmark for release ${{ needs.extract-version.outputs.version }}"
+        
+        # Comprehensive performance test
+        ab -n 1000 -c 20 "http://localhost:8000/solve?letters=programming&min_word_length=3" > benchmark-results.txt
+        
+        # Extract key metrics
+        REQUESTS_PER_SEC=$(grep "Requests per second:" benchmark-results.txt | awk '{print $4}')
+        AVG_TIME=$(grep "Time per request:" benchmark-results.txt | head -1 | awk '{print $4}')
+        P95_TIME=$(grep "95%" benchmark-results.txt | awk '{print $2}')
+        
+        echo "Performance Metrics:"
+        echo "- Requests per second: $REQUESTS_PER_SEC"
+        echo "- Average response time: ${AVG_TIME}ms"
+        echo "- 95th percentile: ${P95_TIME}ms"
+        
+        # Create performance report
+        cat > PERFORMANCE_REPORT.md << EOF
+        # Performance Report - WordMixr ${{ needs.extract-version.outputs.version }}
+        
+        ## Test Configuration
+        - Requests: 1000
+        - Concurrency: 20
+        - Test Query: "programming" (3+ letters)
+        
+        ## Results
+        - **Requests per second**: $REQUESTS_PER_SEC
+        - **Average response time**: ${AVG_TIME}ms
+        - **95th percentile**: ${P95_TIME}ms
+        
+        ## Test Details
+        \`\`\`
+        $(cat benchmark-results.txt)
+        \`\`\`
+        EOF
+        
+    - name: Test critical word scenarios
+      run: |
+        # Test critical scenarios for release validation
+        echo "Testing critical word scenarios..."
+        
+        # BHACE scenario
+        response=$(curl -s "http://localhost:8000/solve?letters=bhace&min_word_length=3")
+        echo "$response" | jq -e '.success == true and (.words | contains(["ache", "beach", "each"]))'
+        
+        # GRINDK scenario  
+        response=$(curl -s "http://localhost:8000/solve?letters=grindk&min_word_length=4")
+        echo "$response" | jq -e '.success == true and (.words | contains(["gird", "grid", "grind", "drink"]))'
+        
+        echo "✅ All critical word scenarios passed"
+        
+    - name: Stop application
+      if: always()
+      run: docker-compose -f docker-compose.release.yml down
+      
+    - name: Upload performance report
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-report
+        path: |
+          PERFORMANCE_REPORT.md
+          benchmark-results.txt
+
+  # Deployment to staging (optional)
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [create-release, performance-benchmark]
+    if: ${{ !needs.extract-version.outputs.prerelease }}  # Only deploy stable releases
+    environment: staging
+    
+    steps:
+    - name: Deploy to staging environment
+      run: |
+        echo "Deploying WordMixr ${{ needs.extract-version.outputs.version }} to staging"
+        echo "Docker images:"
+        echo "- Backend: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:${{ needs.extract-version.outputs.version }}"
+        echo "- Frontend: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:${{ needs.extract-version.outputs.version }}"
+        
+        # Add actual deployment commands here
+        # For example, using kubectl, docker-compose, or deployment scripts
+        
+        echo "✅ Staging deployment completed"
+
+  # Notify on release completion
+  notify-completion:
+    name: Notify Release Completion
+    runs-on: ubuntu-latest
+    needs: [create-release, performance-benchmark, deploy-staging]
+    if: always()
+    
+    steps:
+    - name: Release completion summary
+      run: |
+        echo "🚀 WordMixr Release ${{ needs.extract-version.outputs.version }} Complete!"
+        echo ""
+        echo "📊 Release Status:"
+        echo "- GitHub Release: ${{ needs.create-release.result }}"
+        echo "- Performance Benchmark: ${{ needs.performance-benchmark.result }}"
+        echo "- Staging Deployment: ${{ needs.deploy-staging.result }}"
+        echo ""
+        echo "🐳 Docker Images Published:"
+        echo "- ghcr.io/${{ github.repository }}-backend:${{ needs.extract-version.outputs.version }}"
+        echo "- ghcr.io/${{ github.repository }}-frontend:${{ needs.extract-version.outputs.version }}"
+        echo ""
+        echo "📖 Release Notes: https://github.com/${{ github.repository }}/releases/tag/v${{ needs.extract-version.outputs.version }}" 

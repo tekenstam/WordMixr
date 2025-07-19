@@ -5,3 +5,9 @@ pytest
 pytest-asyncio
 httpx
 pytest-cov
+black
+isort
+flake8
+mypy
+bandit
+safety
