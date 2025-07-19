@@ -2,6 +2,13 @@
 
 This document describes WordMixr's comprehensive CI/CD pipeline built with GitHub Actions.
 
+## 🔄 **Latest Updates**
+
+**✅ Updated to Artifact Actions v4** (December 2024)
+- All workflows now use `actions/upload-artifact@v4` and `actions/download-artifact@v4`
+- Improved upload/download speeds by up to 98% compared to v3
+- Future-proofed against the [v3 deprecation](https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/) (effective January 30, 2025)
+
 ## Overview
 
 WordMixr uses a two-stage pipeline approach:
@@ -343,6 +350,11 @@ Usually indicates:
 - Verify GITHUB_TOKEN permissions
 - Check package visibility settings
 - Ensure repository packages are connected
+
+#### Artifact Upload/Download Issues
+- All workflows use artifact actions v4 for optimal performance
+- If experiencing artifact issues, ensure you're not using deprecated v3 actions
+- v4 provides up to 98% faster upload/download speeds
 
 ### Performance Monitoring
 

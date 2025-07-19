@@ -3,6 +3,7 @@
 [![CI](https://github.com/yourusername/wordmixr/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/wordmixr/actions/workflows/ci.yml)
 [![Release](https://github.com/yourusername/wordmixr/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/wordmixr/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Artifact Actions](https://img.shields.io/badge/GitHub%20Actions-Artifact%20v4-green.svg)](https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/)
 
 A full-stack web application for solving word puzzles by finding all possible words from scrambled letters. Optimized for popular word games like Word Cookies.
 
