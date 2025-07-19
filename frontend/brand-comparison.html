@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordMixr Brand Comparison</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .brand-demo {
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            min-height: 600px;
+        }
+
+        /* Original Theme: Blue/Purple Gradients */
+        .original {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #e2e8f0;
+        }
+
+        .original .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .original h1 {
+            color: #4a5568;
+            font-size: 3rem;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .original .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .original .input-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .original input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            color: #4a5568;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .original input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .original .solve-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: system-ui, -apple-system, sans-serif;
+            transition: all 0.2s;
+        }
+
+        .original .solve-btn:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            transform: translateY(-1px);
+        }
+
+        .original .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .original .word-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .original .word-card:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Style Guide 1: Vibrant & Warm */
+        .vibrant {
+            background: #F9E8CE;
+            border: 2px solid #E5D4B8;
+        }
+
+        .vibrant .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .vibrant .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .vibrant .pan-icon {
+            width: 60px;
+            height: 60px;
+            background: #D36629;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 12px rgba(78, 44, 30, 0.3);
+        }
+
+        .vibrant h1 {
+            color: #4E2C1E;
+            font-size: 3rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 2px 2px 4px rgba(78, 44, 30, 0.1);
+        }
+
+        .vibrant .letter-tiles {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .vibrant .tile {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #E5D4B8;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 2px 6px rgba(78, 44, 30, 0.1);
+        }
+
+        .vibrant .tile:nth-child(odd) {
+            background: #F9E8CE;
+            color: #4E2C1E;
+            transform: rotate(-2deg);
+        }
+
+        .vibrant .tile:nth-child(even) {
+            background: #D36629;
+            color: #fff;
+            transform: rotate(2deg);
+        }
+
+        .vibrant .subtitle {
+            color: #6B4423;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+
+        .vibrant .input-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .vibrant input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #E5D4B8;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.8);
+            color: #4E2C1E;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .vibrant input:focus {
+            outline: none;
+            border-color: #D36629;
+        }
+
+        .vibrant .solve-btn {
+            padding: 15px 30px;
+            background: #D36629;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .vibrant .solve-btn:hover {
+            background: #B85520;
+            transform: translateY(-1px);
+        }
+
+        .vibrant .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .vibrant .word-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #E5D4B8;
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            color: #4E2C1E;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .vibrant .word-card:hover {
+            background: #D36629;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Style Guide 2: Rich & Sophisticated */
+        .sophisticated {
+            background: #F8E6C1;
+            border: 2px solid #E8D5B7;
+        }
+
+        .sophisticated .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sophisticated .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sophisticated .pan-icon {
+            width: 60px;
+            height: 60px;
+            background: #B05325;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 12px rgba(91, 59, 47, 0.3);
+        }
+
+        .sophisticated h1 {
+            color: #5B3B2F;
+            font-size: 3rem;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            text-shadow: 2px 2px 4px rgba(91, 59, 47, 0.1);
+        }
+
+        .sophisticated .letter-tiles {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .sophisticated .tile {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #E8D5B7;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            font-family: 'Nunito', sans-serif;
+            box-shadow: 0 2px 6px rgba(91, 59, 47, 0.1);
+        }
+
+        .sophisticated .tile:nth-child(odd) {
+            background: #F8E6C1;
+            color: #5B3B2F;
+            transform: rotate(-2deg);
+        }
+
+        .sophisticated .tile:nth-child(even) {
+            background: #B05325;
+            color: #fff;
+            transform: rotate(2deg);
+        }
+
+        .sophisticated .subtitle {
+            color: #7A4F3F;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+
+        .sophisticated .input-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .sophisticated input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #E8D5B7;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.8);
+            color: #5B3B2F;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .sophisticated input:focus {
+            outline: none;
+            border-color: #B05325;
+        }
+
+        .sophisticated .solve-btn {
+            padding: 15px 30px;
+            background: #B05325;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .sophisticated .solve-btn:hover {
+            background: #954420;
+            transform: translateY(-1px);
+        }
+
+        .sophisticated .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .sophisticated .word-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #E8D5B7;
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            color: #5B3B2F;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .sophisticated .word-card:hover {
+            background: #B05325;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .comparison-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 2.5rem;
+            font-weight: 700;
+            grid-column: 1 / -1;
+        }
+
+        .brand-title {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.1);
+            color: rgba(0, 0, 0, 0.7);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .brand-demo {
+            position: relative;
+        }
+
+        .color-palette {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+        }
+
+        .color-palette h3 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .color-swatches {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: 600;
+        }
+
+        @media (max-width: 1400px) {
+            .comparison-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="comparison-container">
+        <h1 class="comparison-title">🎨 WordMixr Theme Comparison</h1>
+        
+        <!-- Original Theme: Blue/Purple Gradients -->
+        <div class="brand-demo original">
+            <div class="brand-title">Original Theme: Blue/Purple Gradients</div>
+            
+            <div class="header">
+                <h1>🎯 WordMixr</h1>
+                <p class="subtitle">Solve word puzzles by finding all possible words from scrambled letters</p>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" placeholder="Enter scrambled letters..." value="scramble">
+                <button class="solve-btn">Solve</button>
+            </div>
+            
+            <div class="results">
+                <div class="word-card">scramble</div>
+                <div class="word-card">crabs</div>
+                <div class="word-card">cream</div>
+                <div class="word-card">amber</div>
+                <div class="word-card">scale</div>
+                <div class="word-card">clear</div>
+                <div class="word-card">bears</div>
+                <div class="word-card">laser</div>
+            </div>
+            
+            <div class="color-palette">
+                <h3>Color Palette:</h3>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">💙</div>
+                    <div class="color-swatch" style="background: #f7fafc; color: #4a5568;">🤍</div>
+                    <div class="color-swatch" style="background: #4a5568;">🖤</div>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #718096;">
+                    <strong>Font:</strong> System UI, -apple-system, sans-serif<br>
+                    <strong>Feel:</strong> Clean, familiar, tech-focused
+                </p>
+            </div>
+        </div>
+        
+        <!-- Style Guide 1: Vibrant & Warm -->
+        <div class="brand-demo vibrant">
+            <div class="brand-title">Style Guide 1: Vibrant & Warm</div>
+            
+            <div class="header">
+                <div class="logo-section">
+                    <div class="pan-icon">🍳</div>
+                    <h1>WordMixr</h1>
+                </div>
+                
+                <div class="letter-tiles">
+                    <div class="tile">W</div>
+                    <div class="tile">O</div>
+                    <div class="tile">R</div>
+                    <div class="tile">D</div>
+                </div>
+                
+                <p class="subtitle">🔥 Cook up words from scrambled letters!</p>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" placeholder="Enter scrambled letters..." value="scramble">
+                <button class="solve-btn">Solve</button>
+            </div>
+            
+            <div class="results">
+                <div class="word-card">scramble</div>
+                <div class="word-card">crabs</div>
+                <div class="word-card">cream</div>
+                <div class="word-card">amber</div>
+                <div class="word-card">scale</div>
+                <div class="word-card">clear</div>
+                <div class="word-card">bears</div>
+                <div class="word-card">laser</div>
+            </div>
+            
+            <div class="color-palette">
+                <h3>Color Palette:</h3>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #D36629;">🧡</div>
+                    <div class="color-swatch" style="background: #F9E8CE; color: #4E2C1E;">🤍</div>
+                    <div class="color-swatch" style="background: #4E2C1E;">🤎</div>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #6B4423;">
+                    <strong>Font:</strong> Poppins (primary), Nunito (fallback)<br>
+                    <strong>Feel:</strong> Energetic, modern, eye-catching
+                </p>
+            </div>
+        </div>
+        
+        <!-- Style Guide 2: Rich & Sophisticated -->
+        <div class="brand-demo sophisticated">
+            <div class="brand-title">Style Guide 2: Rich & Sophisticated</div>
+            
+            <div class="header">
+                <div class="logo-section">
+                    <div class="pan-icon">🍳</div>
+                    <h1>WordMixr</h1>
+                </div>
+                
+                <div class="letter-tiles">
+                    <div class="tile">W</div>
+                    <div class="tile">O</div>
+                    <div class="tile">R</div>
+                    <div class="tile">D</div>
+                </div>
+                
+                <p class="subtitle">🔥 Cook up words from scrambled letters!</p>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" placeholder="Enter scrambled letters..." value="scramble">
+                <button class="solve-btn">Solve</button>
+            </div>
+            
+            <div class="results">
+                <div class="word-card">scramble</div>
+                <div class="word-card">crabs</div>
+                <div class="word-card">cream</div>
+                <div class="word-card">amber</div>
+                <div class="word-card">scale</div>
+                <div class="word-card">clear</div>
+                <div class="word-card">bears</div>
+                <div class="word-card">laser</div>
+            </div>
+            
+            <div class="color-palette">
+                <h3>Color Palette:</h3>
+                <div class="color-swatches">
+                    <div class="color-swatch" style="background: #B05325;">🧡</div>
+                    <div class="color-swatch" style="background: #F8E6C1; color: #5B3B2F;">🤍</div>
+                    <div class="color-swatch" style="background: #5B3B2F;">🤎</div>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #7A4F3F;">
+                    <strong>Font:</strong> Nunito (primary), Quicksand, Poppins (fallbacks)<br>
+                    <strong>Feel:</strong> Warm, sophisticated, cozy
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

@@ -7,6 +7,7 @@ Comprehensive technical documentation for WordMixr development, testing, buildin
 - [Development Setup](#development-setup)
 - [Architecture & Design](#architecture--design)
 - [Testing](#testing)
+- [CI/CD Pipeline](#cicd-pipeline)
 - [Building & Deployment](#building--deployment)
 - [API Reference](#api-reference)
 - [Algorithm Details](#algorithm-details)
@@ -299,40 +300,63 @@ describe('WordSolver Component', () => {
 })
 ```
 
+## CI/CD Pipeline
+
+WordMixr uses GitHub Actions for comprehensive continuous integration and automated releases.
+
 ### Continuous Integration
 
-#### GitHub Actions (Example)
+Every pull request and push to main triggers:
+- **Backend Quality**: Code formatting, linting, type checking, security scanning
+- **Frontend Quality**: TypeScript checking, linting, formatting verification  
+- **Testing**: Full test suite including critical word coverage tests
+- **Build Verification**: Docker image building and E2E testing
+- **Security**: Dependency vulnerability scanning and static analysis
+- **Performance**: Load testing and response time validation
+
+### Automated Releases
+
+Version tags (e.g., `v1.2.3`) trigger automated releases:
+- **Full CI Validation**: Complete test and quality pipeline
+- **Docker Publishing**: Multi-arch images to GitHub Container Registry
+- **Release Artifacts**: Source packages and checksums
+- **Security Scanning**: Container vulnerability scanning
+- **Performance Benchmarks**: Release validation testing
+- **GitHub Release**: Automated release notes and artifact publishing
+
+### Branch Protection
+
+Configure required status checks in GitHub:
 ```yaml
-name: CI/CD Pipeline
-
-on: [push, pull_request]
-
-jobs:
-  backend-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - run: |
-          cd backend
-          pip install -r requirements.txt
-          pytest --cov=app --cov-report=xml
-          
-  frontend-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - run: |
-          cd frontend
-          npm install
-          npm run test
-          npm run build
+Required checks:
+- Backend Tests & Quality
+- Frontend Tests & Quality  
+- Docker Build Verification
+- End-to-End Tests
 ```
+
+### Usage Examples
+
+**Pull Request Flow**:
+```bash
+git checkout -b feature/new-feature
+# Make changes...
+git push origin feature/new-feature
+# Create PR → CI automatically runs all checks
+```
+
+**Release Flow**:
+```bash
+git tag v1.2.3
+git push origin v1.2.3
+# Automated release pipeline runs → Docker images published → GitHub release created
+```
+
+**Critical Word Testing**: The CI pipeline specifically validates Word Cookies scenarios:
+- BHACE → must find "ache", "beach", "each"
+- GRINDK → must find "gird", "grid", "grind", "drink"
+
+📖 **Complete CI/CD Documentation**: See [docs/CICD.md](docs/CICD.md) for comprehensive setup and troubleshooting guide.
 
 ## Building & Deployment
 

@@ -1,5 +1,9 @@
 # WordMixr 🎯
 
+[![CI](https://github.com/yourusername/wordmixr/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/wordmixr/actions/workflows/ci.yml)
+[![Release](https://github.com/yourusername/wordmixr/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/wordmixr/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A full-stack web application for solving word puzzles by finding all possible words from scrambled letters. Optimized for popular word games like Word Cookies.
 
 ## Features
