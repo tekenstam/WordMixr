@@ -124,13 +124,19 @@ class TestAPIEndpoints:
     
     def test_solve_endpoint_validation(self, client):
         """Test input validation"""
-        # Test missing letters parameter
+        # Test missing letters parameter - now handled gracefully
         response = client.get("/solve")
-        assert response.status_code == 422  # Validation error
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is False
+        assert "Letters parameter is required" in data["errors"]
         
-        # Test empty letters - FastAPI validates min_length=1
+        # Test empty letters - now handled gracefully
         response = client.get("/solve?letters=")
-        assert response.status_code == 422  # Validation error
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is False
+        assert "Letters parameter is required" in data["errors"]
         
         # Test invalid min_word_length - FastAPI validates ge=1
         response = client.get("/solve?letters=abc&min_word_length=0")
@@ -138,13 +144,19 @@ class TestAPIEndpoints:
     
     def test_anagrams_endpoint_validation(self, client):
         """Test anagram endpoint validation"""
-        # Test missing letters parameter
+        # Test missing letters parameter - now handled gracefully
         response = client.get("/anagrams")
-        assert response.status_code == 422  # Validation error
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is False
+        assert "Letters parameter is required" in data["errors"]
         
-        # Test empty letters - FastAPI validates min_length=1  
+        # Test empty letters - now handled gracefully
         response = client.get("/anagrams?letters=")
-        assert response.status_code == 422  # Validation error
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is False
+        assert "Letters parameter is required" in data["errors"]
     
     def test_solve_endpoint_edge_cases(self, client):
         """Test edge cases for solve endpoint"""
