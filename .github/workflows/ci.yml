@@ -283,9 +283,6 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         
-    - name: Install safety
-      run: pip install safety
-      
     - name: Check Python dependencies
       run: |
         cd backend
@@ -310,7 +307,7 @@ jobs:
       with:
         name: security-reports
         path: |
-          backend/safety-report.json
+          backend/pip-audit-report.json
 
   # Performance Testing
   performance-test:
