@@ -341,7 +341,7 @@ jobs:
         
     - name: Start release application
       run: |
-        docker-compose -f docker-compose.release.yml up -d
+        docker compose -f docker-compose.release.yml up -d
         sleep 60  # Wait for services to be ready
         
     - name: Install performance testing tools
@@ -403,7 +403,7 @@ jobs:
         
     - name: Stop application
       if: always()
-      run: docker-compose -f docker-compose.release.yml down
+      run: docker compose -f docker-compose.release.yml down
       
     - name: Upload performance report
       uses: actions/upload-artifact@v4
