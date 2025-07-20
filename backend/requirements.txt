@@ -11,3 +11,4 @@ flake8
 mypy
 bandit
 pip-audit
+setuptools>=78.1.1

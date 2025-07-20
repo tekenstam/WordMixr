@@ -91,9 +91,7 @@ async def root():
 
 @app.get("/solve")
 async def solve_puzzle(
-    letters: str = Query(
-        "", description="Scrambled letters to solve"
-    ),
+    letters: str = Query("", description="Scrambled letters to solve"),
     min_word_length: int = Query(
         3, description="Minimum word length to include in results", ge=1, le=10
     ),
@@ -142,9 +140,7 @@ async def solve_puzzle(
 
 @app.get("/anagrams")
 async def find_anagrams(
-    letters: str = Query(
-        "", description="Letters to find anagrams for"
-    ),
+    letters: str = Query("", description="Letters to find anagrams for"),
     min_word_length: int = Query(
         3, description="Minimum word length to include in results", ge=1, le=10
     ),
