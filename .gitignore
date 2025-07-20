@@ -83,7 +83,7 @@ coverage.xml
 *-report.json
 *.sarif
 bandit-report.json
-safety-report.json
+pip-audit-report.json
 trivy-results.sarif
 perf-results.txt
 

@@ -290,8 +290,8 @@ jobs:
       run: |
         cd backend
         pip install -r requirements.txt
-        safety check --save-json safety-report.json || true
-        safety check
+        pip-audit --format=json --output=pip-audit-report.json || true
+        pip-audit
         
     - name: Set up Node.js
       uses: actions/setup-node@v4
