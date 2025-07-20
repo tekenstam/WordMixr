@@ -10,4 +10,4 @@ isort
 flake8
 mypy
 bandit
-safety
+safety==2.3.5
