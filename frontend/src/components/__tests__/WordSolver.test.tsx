@@ -30,10 +30,15 @@ describe('WordSolver Component', () => {
     const user = userEvent.setup()
     render(<WordSolver />)
 
-    const solveButton = screen.getByText('Solve')
-    await user.click(solveButton)
+    const input = screen.getByPlaceholderText('Enter scrambled letters...')
+    
+    // Focus the input and press Enter to trigger validation (without typing anything)
+    await user.click(input)
+    await user.keyboard('{Enter}')
 
-    expect(screen.getByText('Please enter some letters')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Please enter some letters')).toBeInTheDocument()
+    })
   })
 
   it('calls API and displays results on successful solve', async () => {
@@ -92,10 +97,15 @@ describe('WordSolver Component', () => {
     render(<WordSolver />)
 
     const anagramButton = screen.getByText('Anagrams Only')
+    const allWordsButton = screen.getByText('All Words')
+    
+    // Initially "All Words" should be active (has gradient background)
+    expect(allWordsButton).toHaveStyle('background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)')
+    
     await user.click(anagramButton)
 
-    // Should show anagram mode UI changes
-    expect(anagramButton).toHaveClass('active') // assuming we have active class styling
+    // After clicking, "Anagrams Only" should be active
+    expect(anagramButton).toHaveStyle('background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)')
   })
 
   it('changes minimum word length filter', async () => {
@@ -138,9 +148,14 @@ describe('WordSolver Component', () => {
     const wordElement = screen.getByText('set')
     await user.click(wordElement)
 
-    // Word should have clicked styling (this would depend on actual implementation)
-    // For now, just verify the click event works
-    expect(wordElement).toBeInTheDocument()
+    // After clicking, the word should still be in the document but with different styling
+    // The word gets re-rendered when clicked, so we need to find it again
+    await waitFor(() => {
+      const clickedWordElement = screen.getByText('set')
+      expect(clickedWordElement).toBeInTheDocument()
+      expect(clickedWordElement).toHaveStyle('opacity: 0.6')
+      expect(clickedWordElement).toHaveStyle('text-decoration: line-through')
+    })
   })
 
   it('shows loading state during API call', async () => {
@@ -230,11 +245,12 @@ describe('WordSolver Component', () => {
 
     const input = screen.getByPlaceholderText('Enter scrambled letters...')
     const anagramButton = screen.getByText('Anagrams Only')
+    const solveButton = screen.getByText('Solve')
 
     // Switch to anagram mode
     await user.click(anagramButton)
     await user.type(input, 'listen')
-    await user.click(anagramButton) // Click again to submit
+    await user.click(solveButton) // Click the Solve button, not the anagram button again
 
     await waitFor(() => {
       expect(mockFetch).toHaveBeenCalledWith(
