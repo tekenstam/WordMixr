@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { BrandTheme, themes, ThemeName, sophisticatedTheme } from '../themes/brandThemes'
+import { BrandTheme, themes, ThemeName } from '../themes/brandThemes'
 
 interface ThemeContextType {
   theme: BrandTheme
@@ -15,9 +15,9 @@ interface ThemeProviderProps {
   defaultTheme?: ThemeName
 }
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ 
-  children, 
-  defaultTheme = 'sophisticated' 
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({
+  children,
+  defaultTheme = 'sophisticated',
 }) => {
   const [themeName, setThemeName] = useState<ThemeName>(defaultTheme)
   const theme = themes[themeName]
@@ -27,12 +27,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   }
 
   return (
-    <ThemeContext.Provider value={{
-      theme,
-      themeName,
-      setTheme,
-      availableThemes: themes
-    }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        themeName,
+        setTheme,
+        availableThemes: themes,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   )
@@ -44,4 +46,4 @@ export const useTheme = (): ThemeContextType => {
     throw new Error('useTheme must be used within a ThemeProvider')
   }
   return context
-} 
+}
