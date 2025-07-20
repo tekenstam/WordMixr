@@ -1,6 +1,4 @@
 import logging
-import os
-from typing import Optional
 
 from config import Config
 from fastapi import FastAPI, HTTPException, Query
@@ -201,4 +199,5 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Bind to all interfaces for containerized deployment
+    uvicorn.run(app, host="0.0.0.0", port=8000)  # nosec B104

@@ -1,5 +1,11 @@
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict, List, TypedDict
+
+
+class ValidationResult(TypedDict):
+    valid: bool
+    errors: List[str]
+    cleaned: str
 
 
 def clean_letters(letters: str) -> str:
@@ -12,9 +18,9 @@ def clean_letters(letters: str) -> str:
     return cleaned
 
 
-def validate_letters(letters: str) -> Dict[str, Any]:
+def validate_letters(letters: str) -> ValidationResult:
     """Validate the input letters and return validation result."""
-    result = {"valid": True, "errors": [], "cleaned": letters}
+    result: ValidationResult = {"valid": True, "errors": [], "cleaned": letters}
 
     if not letters:
         result["valid"] = False
