@@ -16,7 +16,9 @@ class TestAPIEndpoints:
         """Create test client"""
         # Change to app directory for dictionary file access
         os.chdir(os.path.join(os.path.dirname(__file__), '..', 'app'))
-        return TestClient(app)
+        # Use context manager to properly trigger lifespan events
+        with TestClient(app) as test_client:
+            yield test_client
     
     def test_health_endpoint(self, client):
         """Test health check endpoint"""
@@ -126,19 +128,13 @@ class TestAPIEndpoints:
         response = client.get("/solve")
         assert response.status_code == 422  # Validation error
         
-        # Test empty letters
+        # Test empty letters - FastAPI validates min_length=1
         response = client.get("/solve?letters=")
-        assert response.status_code == 200
-        data = response.json()
-        assert data["success"] == False
-        assert "error" in data or "errors" in data
+        assert response.status_code == 422  # Validation error
         
-        # Test invalid min_word_length
+        # Test invalid min_word_length - FastAPI validates ge=1
         response = client.get("/solve?letters=abc&min_word_length=0")
-        assert response.status_code == 200
-        data = response.json()
-        assert data["success"] == False
-        assert "error" in data or "errors" in data
+        assert response.status_code == 422  # Validation error
     
     def test_anagrams_endpoint_validation(self, client):
         """Test anagram endpoint validation"""
@@ -146,12 +142,9 @@ class TestAPIEndpoints:
         response = client.get("/anagrams")
         assert response.status_code == 422  # Validation error
         
-        # Test empty letters
+        # Test empty letters - FastAPI validates min_length=1  
         response = client.get("/anagrams?letters=")
-        assert response.status_code == 200
-        data = response.json()
-        assert data["success"] == False
-        assert "error" in data or "errors" in data
+        assert response.status_code == 422  # Validation error
     
     def test_solve_endpoint_edge_cases(self, client):
         """Test edge cases for solve endpoint"""
@@ -207,7 +200,9 @@ class TestPerformance:
     def client(self):
         """Create test client"""
         os.chdir(os.path.join(os.path.dirname(__file__), '..', 'app'))
-        return TestClient(app)
+        # Use context manager to properly trigger lifespan events
+        with TestClient(app) as test_client:
+            yield test_client
     
     def test_solve_performance_large_input(self, client):
         """Test performance with large input"""
@@ -238,7 +233,9 @@ class TestCoverage:
     def client(self):
         """Create test client"""
         os.chdir(os.path.join(os.path.dirname(__file__), '..', 'app'))
-        return TestClient(app)
+        # Use context manager to properly trigger lifespan events
+        with TestClient(app) as test_client:
+            yield test_client
     
     def test_missing_words_coverage(self, client):
         """Test that previously missing words are now covered"""

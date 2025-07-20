@@ -140,7 +140,7 @@ class TestEnvironmentConfiguration:
                 import config
                 reload(config)
                 
-                assert config.Config.DICTIONARY_TYPE == expected_type
+                assert config.Config.DICTIONARY_TYPE.value == expected_type.value
     
     def test_invalid_environment_variable(self):
         """Test handling of invalid environment variable values"""
@@ -163,7 +163,7 @@ class TestEnvironmentConfiguration:
             reload(config)
             
             # Should default to SCOWL Large
-            assert config.Config.DICTIONARY_TYPE == DictionaryType.SCOWL_LARGE
+            assert config.Config.DICTIONARY_TYPE.value == DictionaryType.SCOWL_LARGE.value
 
 class TestConfigurationConstants:
     """Test configuration constants and structure"""

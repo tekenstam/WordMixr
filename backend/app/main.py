@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 
 from config import Config
 from fastapi import FastAPI, HTTPException, Query
@@ -10,32 +11,13 @@ from utils import format_error_response, format_response, validate_letters
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI app
-app = FastAPI(
-    title="WordMixr API",
-    description="A word puzzle solver API that finds valid words from scrambled letters",
-    version="1.0.0",
-)
-
-# Configure CORS for frontend access
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:5173",
-    ],  # Add Vite dev server port
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # Global dictionary and metadata - loaded at startup
 DICTIONARY = None
 DICTIONARY_INFO = None
 
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """Load the dictionary when the app starts."""
     global DICTIONARY, DICTIONARY_INFO
     logger.info("Loading word dictionary...")
@@ -59,6 +41,39 @@ async def startup_event():
             "type": "error",
             "config": {"type": "unknown", "description": "Failed to load"},
         }
+
+    yield
+
+    # Cleanup (if needed)
+    DICTIONARY = None
+    DICTIONARY_INFO = None
+
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="WordMixr API",
+    description="A word puzzle solver API that finds valid words from scrambled letters",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+# Configure CORS for frontend access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+    ],  # Add Vite dev server port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# Remove the old startup event since we're using lifespan now
+async def _unused_startup_placeholder():
+    """Placeholder for removed startup event."""
+    pass
 
 
 @app.get("/")
