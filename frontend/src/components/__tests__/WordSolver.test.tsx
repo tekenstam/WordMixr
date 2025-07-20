@@ -31,7 +31,7 @@ describe('WordSolver Component', () => {
     render(<WordSolver />)
 
     const input = screen.getByPlaceholderText('Enter scrambled letters...')
-    
+
     // Focus the input and press Enter to trigger validation (without typing anything)
     await user.click(input)
     await user.keyboard('{Enter}')
@@ -98,14 +98,18 @@ describe('WordSolver Component', () => {
 
     const anagramButton = screen.getByText('Anagrams Only')
     const allWordsButton = screen.getByText('All Words')
-    
+
     // Initially "All Words" should be active (has gradient background)
-    expect(allWordsButton).toHaveStyle('background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)')
-    
+    expect(allWordsButton).toHaveStyle(
+      'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    )
+
     await user.click(anagramButton)
 
     // After clicking, "Anagrams Only" should be active
-    expect(anagramButton).toHaveStyle('background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)')
+    expect(anagramButton).toHaveStyle(
+      'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    )
   })
 
   it('changes minimum word length filter', async () => {
