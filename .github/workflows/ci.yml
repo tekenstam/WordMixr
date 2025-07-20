@@ -6,6 +6,11 @@ on:
   push:
     branches: [ main, master ]
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 env:
   NODE_VERSION: '18'
   PYTHON_VERSION: '3.11'
@@ -104,7 +109,6 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
-        cache-dependency-path: frontend/package-lock.json
         
     - name: Install dependencies
       run: npm ci
@@ -242,6 +246,9 @@ jobs:
   security-scan:
     name: Security Scanning
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
     
     steps:
     - name: Checkout code
@@ -282,8 +289,8 @@ jobs:
       run: |
         cd backend
         pip install -r requirements.txt
-        safety check --json --output safety-report.json || true
-        safety check
+        safety scan --output json --save-json safety-report.json || true
+        safety scan
         
     - name: Set up Node.js
       uses: actions/setup-node@v4
@@ -293,6 +300,7 @@ jobs:
     - name: Check npm dependencies
       run: |
         cd frontend
+        npm ci
         npm audit --audit-level=high
         
     - name: Upload security reports
