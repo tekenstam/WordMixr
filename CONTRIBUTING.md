@@ -42,7 +42,7 @@ cd wordmixr
 git checkout -b feature/amazing-feature
 
 # 3. Set up development environment
-docker-compose up --build
+docker compose up --build
 ```
 
 ## Development Setup

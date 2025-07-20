@@ -31,7 +31,7 @@ git clone https://github.com/yourusername/wordmixr.git
 cd wordmixr
 
 # Start the application
-docker-compose up --build
+docker compose up --build
 ```
 
 ### 2. Access the Application
@@ -63,16 +63,16 @@ Dependabot runs weekly and creates PRs for security updates and version bumps. S
 
 ```bash
 # Start application (detached)
-docker-compose up --build -d
+docker compose up --build -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop application
-docker-compose down
+docker compose down
 
 # Restart with fresh build
-docker-compose down && docker-compose up --build -d
+docker compose down && docker compose up --build -d
 ```
 
 ## Example Usage
@@ -110,14 +110,14 @@ For technical details, development setup, testing, API documentation, and deploy
 
 **Port already in use:**
 ```bash
-docker-compose down
+docker compose down
 # Edit ports in docker-compose.yml if needed
-docker-compose up --build
+docker compose up --build
 ```
 
 **Can't connect to backend:**
 - Ensure backend is running: `curl http://localhost:8000/health`
-- Check Docker logs: `docker-compose logs backend`
+- Check Docker logs: `docker compose logs backend`
 
 **Dictionary issues:**
 - Verify dictionary files exist in `backend/app/`

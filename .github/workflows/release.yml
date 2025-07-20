@@ -249,7 +249,7 @@ jobs:
         # Download and run
         curl -sSL https://github.com/${{ github.repository }}/archive/$CURRENT_TAG.tar.gz | tar -xz
         cd wordmixr-${CURRENT_TAG#v}
-        docker-compose up --build
+        docker compose up --build
         \`\`\`
         
         ## Verification
@@ -430,7 +430,7 @@ jobs:
         echo "- Frontend: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:${{ needs.extract-version.outputs.version }}"
         
         # Add actual deployment commands here
-        # For example, using kubectl, docker-compose, or deployment scripts
+        # For example, using kubectl, docker compose, or deployment scripts
         
         echo "✅ Staging deployment completed"
 

@@ -365,20 +365,20 @@ git push origin v1.2.3
 #### Development Build
 ```bash
 # Build all services
-docker-compose build
+docker compose build
 
 # Build specific service
-docker-compose build backend
-docker-compose build frontend
+docker compose build backend
+docker compose build frontend
 
 # Build with no cache
-docker-compose build --no-cache
+docker compose build --no-cache
 ```
 
 #### Production Build
 ```bash
 # Production optimization
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+docker compose -f docker-compose.yml -f docker-compose.prod.yml build
 
 # Multi-stage build for optimization
 docker build -t wordmixr-backend:latest -f backend/Dockerfile backend/
@@ -408,11 +408,11 @@ docker push wordmixr-frontend:v1.2.0
 **1. Docker Compose (Simple)**
 ```bash
 # Production deployment
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 
 # Update deployment
-docker-compose pull
-docker-compose up -d --no-deps backend frontend
+docker compose pull
+docker compose up -d --no-deps backend frontend
 ```
 
 **2. Kubernetes Deployment**
@@ -985,7 +985,7 @@ lsof -i :8000
 docker system prune -a
 
 # Rebuild without cache
-docker-compose build --no-cache
+docker compose build --no-cache
 ```
 
 ### Debugging
@@ -1018,19 +1018,19 @@ console.log('API Response:', response)
 #### Backend Logs
 ```bash
 # View backend logs
-docker-compose logs backend
+docker compose logs backend
 
 # Follow logs in real-time
-docker-compose logs -f backend
+docker compose logs -f backend
 
 # Filter by level
-docker-compose logs backend | grep ERROR
+docker compose logs backend | grep ERROR
 ```
 
 #### Frontend Logs
 ```bash
 # View frontend build logs
-docker-compose logs frontend
+docker compose logs frontend
 
 # Check for JavaScript errors in browser console
 ```
