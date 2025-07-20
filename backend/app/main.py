@@ -1,12 +1,12 @@
+import logging
+import os
+from typing import Optional
+
+from config import Config
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
-import os
-import logging
-
-from solver import load_dictionary, find_valid_words, get_anagrams
-from config import Config
-from utils import validate_letters, format_response, format_error_response
+from solver import find_valid_words, get_anagrams, load_dictionary
+from utils import format_error_response, format_response, validate_letters
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
