@@ -241,25 +241,71 @@ jobs:
         
         echo "Generating changelog from $PREVIOUS_TAG to $CURRENT_TAG"
         
-        # Generate changelog from git commits
+        # Use GitHub API to generate release notes
         if [ -n "$PREVIOUS_TAG" ]; then
-          CHANGELOG=$(git log --pretty=format:"- %s (%an)" $PREVIOUS_TAG..$CURRENT_TAG)
+          # Generate release notes using GitHub API
+          GITHUB_NOTES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -X POST \
+            "https://api.github.com/repos/${{ github.repository }}/releases/generate-notes" \
+            -d "{\"tag_name\":\"$CURRENT_TAG\",\"previous_tag_name\":\"$PREVIOUS_TAG\"}" | \
+            jq -r '.body')
         else
-          CHANGELOG=$(git log --pretty=format:"- %s (%an)")
+          # For first release, generate notes from beginning
+          GITHUB_NOTES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -X POST \
+            "https://api.github.com/repos/${{ github.repository }}/releases/generate-notes" \
+            -d "{\"tag_name\":\"$CURRENT_TAG\"}" | \
+            jq -r '.body')
         fi
         
-        # Create formatted changelog
+        # Convert repository name to lowercase for Docker
+        REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+        
+        # Create formatted changelog with GitHub-generated content
         cat > RELEASE_NOTES.md << EOF
         # WordMixr ${{ needs.extract-version.outputs.version }}
         
-        ## What's Changed
+        $GITHUB_NOTES
         
-        $CHANGELOG
+        ## 🐳 Docker Images
         
-        ## Docker Images
+        Ready-to-use Docker images are available on GitHub Container Registry:
         
-        - \`ghcr.io/${{ github.repository }}-backend:${{ needs.extract-version.outputs.version }}\`
-        - \`ghcr.io/${{ github.repository }}-frontend:${{ needs.extract-version.outputs.version }}\`
+        ### Backend API
+        \`\`\`bash
+        docker pull ghcr.io/${REPO_LOWER}-backend:${{ needs.extract-version.outputs.version }}
+        \`\`\`
+        
+        ### Frontend Web App
+        \`\`\`bash
+        docker pull ghcr.io/${REPO_LOWER}-frontend:${{ needs.extract-version.outputs.version }}
+        \`\`\`
+        
+        ### Available Tags
+        - \`ghcr.io/${REPO_LOWER}-backend:${{ needs.extract-version.outputs.version }}\` (exact version)
+        - \`ghcr.io/${REPO_LOWER}-backend:$(echo "${{ needs.extract-version.outputs.version }}" | cut -d. -f1-2)\` (minor version)
+        - \`ghcr.io/${REPO_LOWER}-backend:$(echo "${{ needs.extract-version.outputs.version }}" | cut -d. -f1)\` (major version)
+        - \`ghcr.io/${REPO_LOWER}-frontend:${{ needs.extract-version.outputs.version }}\` (exact version)
+        - \`ghcr.io/${REPO_LOWER}-frontend:$(echo "${{ needs.extract-version.outputs.version }}" | cut -d. -f1-2)\` (minor version)
+        - \`ghcr.io/${REPO_LOWER}-frontend:$(echo "${{ needs.extract-version.outputs.version }}" | cut -d. -f1)\` (major version)
+        
+        ### Docker Compose
+        \`\`\`yaml
+        version: '3.9'
+        services:
+          backend:
+            image: ghcr.io/${REPO_LOWER}-backend:${{ needs.extract-version.outputs.version }}
+            ports:
+              - "8000:8000"
+            environment:
+              - WORDMIXR_DICTIONARY=scowl_large
+          frontend:
+            image: ghcr.io/${REPO_LOWER}-frontend:${{ needs.extract-version.outputs.version }}
+            ports:
+              - "3000:3000"
+        \`\`\`
         
         ## Quick Start
         
