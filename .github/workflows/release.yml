@@ -160,12 +160,23 @@ jobs:
       run: |
         tar -czf wordmixr-source-${{ needs.extract-version.outputs.version }}.tar.gz \
           --exclude=.git \
-          --exclude=node_modules \
-          --exclude=__pycache__ \
-          --exclude=.pytest_cache \
-          --exclude=dist \
-          --exclude=build \
-          --exclude=htmlcov \
+          --exclude=.github \
+          --exclude='**/node_modules' \
+          --exclude='**/__pycache__' \
+          --exclude='**/.pytest_cache' \
+          --exclude='**/dist' \
+          --exclude='**/build' \
+          --exclude='**/htmlcov' \
+          --exclude='**/coverage' \
+          --exclude='**/.vite' \
+          --exclude='**/.cache' \
+          --exclude='**/.nyc_output' \
+          --exclude='**/*.log' \
+          --exclude='**/.DS_Store' \
+          --exclude='**/Thumbs.db' \
+          --exclude='**/*.tar.gz' \
+          --exclude='**/*.tgz' \
+          --exclude='**/checksums.sha256' \
           .
           
     - name: Generate checksums
