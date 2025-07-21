@@ -45,6 +45,8 @@ WordMixr is a full-stack web application designed with a clean separation betwee
 - TypeScript for type safety
 - Vite for fast development and building
 - Modern CSS with custom properties
+- Custom brand identity with Nunito typography
+- Progressive Web App (PWA) capabilities
 
 **Backend Tier:**
 - FastAPI (Python 3.11) for high-performance APIs

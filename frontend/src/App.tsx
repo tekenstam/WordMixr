@@ -78,25 +78,20 @@ const AppContent: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '15px',
+                  gap: '20px',
                   marginBottom: '15px',
                 }}
               >
-                <div
+                <img
+                  src='/wordmixr_logo_transparent.png'
+                  alt='WordMixr Logo'
                   style={{
-                    width: '60px',
-                    height: '60px',
-                    background: theme.colors.primary,
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '2rem',
-                    boxShadow: `0 4px 12px ${theme.colors.shadow}`,
+                    width: '80px',
+                    height: '80px',
+                    objectFit: 'contain',
+                    filter: `drop-shadow(0 4px 12px ${theme.colors.shadow})`,
                   }}
-                >
-                  🍳
-                </div>
+                />
                 <h1
                   style={{
                     color: theme.colors.text.primary,
