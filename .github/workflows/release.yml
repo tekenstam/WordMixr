@@ -150,23 +150,23 @@ jobs:
     - name: Package backend source
       run: |
         tar -czf wordmixr-backend-${{ needs.extract-version.outputs.version }}.tar.gz \
-          backend/ \
           --exclude=backend/__pycache__ \
           --exclude=backend/.pytest_cache \
-          --exclude=backend/htmlcov
+          --exclude=backend/htmlcov \
+          backend/
           
     # Create source package
     - name: Create source package
       run: |
         tar -czf wordmixr-source-${{ needs.extract-version.outputs.version }}.tar.gz \
-          . \
           --exclude=.git \
           --exclude=node_modules \
           --exclude=__pycache__ \
           --exclude=.pytest_cache \
           --exclude=dist \
           --exclude=build \
-          --exclude=htmlcov
+          --exclude=htmlcov \
+          .
           
     - name: Generate checksums
       run: |
