@@ -186,12 +186,19 @@ jobs:
     name: Security Scan Release
     runs-on: ubuntu-latest
     needs: [extract-version, build-and-push]
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
     
     strategy:
       matrix:
         component: [backend, frontend]
         
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: Convert image name to lowercase
       id: image-name
       run: |
