@@ -83,8 +83,8 @@ const AppContent: React.FC = () => {
                 }}
               >
                 <img
-                  src="/wordmixr_logo_transparent.png"
-                  alt="WordMixr Logo"
+                  src='/wordmixr_logo_transparent.png'
+                  alt='WordMixr Logo'
                   style={{
                     width: '80px',
                     height: '80px',

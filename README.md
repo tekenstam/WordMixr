@@ -1,9 +1,12 @@
 # WordMixr 🎯
 
-[![CI](https://github.com/yourusername/wordmixr/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/wordmixr/actions/workflows/ci.yml)
-[![Release](https://github.com/yourusername/wordmixr/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/wordmixr/actions/workflows/release.yml)
+[![CI](https://github.com/tekenstam/WordMixr/actions/workflows/ci.yml/badge.svg)](https://github.com/tekenstam/WordMixr/actions/workflows/ci.yml)
+[![Release](https://github.com/tekenstam/WordMixr/actions/workflows/release.yml/badge.svg)](https://github.com/tekenstam/WordMixr/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Artifact Actions](https://img.shields.io/badge/GitHub%20Actions-Artifact%20v4-green.svg)](https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
+[![PWA](https://img.shields.io/badge/PWA-Enabled-purple.svg)](https://web.dev/progressive-web-apps/)
 [![Dependabot](https://img.shields.io/badge/Dependabot-Enabled-brightgreen.svg)](https://github.com/dependabot)
 
 A full-stack web application for solving word puzzles by finding all possible words from scrambled letters. Features a beautiful custom brand identity with warm colors and friendly design, optimized for popular word games like Word Cookies.
