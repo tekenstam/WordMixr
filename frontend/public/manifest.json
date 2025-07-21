@@ -1,0 +1,27 @@
+{
+  "short_name": "WordMixr",
+  "name": "WordMixr - Word Puzzle Solver",
+  "description": "Solve word puzzles by finding all possible words from scrambled letters. Perfect for Word Cookies and word games.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "icon_192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon_512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#B05325",
+  "background_color": "#F8E6C1",
+  "categories": ["games", "education", "productivity"]
+} 

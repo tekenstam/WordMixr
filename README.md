@@ -6,7 +6,7 @@
 [![Artifact Actions](https://img.shields.io/badge/GitHub%20Actions-Artifact%20v4-green.svg)](https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/)
 [![Dependabot](https://img.shields.io/badge/Dependabot-Enabled-brightgreen.svg)](https://github.com/dependabot)
 
-A full-stack web application for solving word puzzles by finding all possible words from scrambled letters. Optimized for popular word games like Word Cookies.
+A full-stack web application for solving word puzzles by finding all possible words from scrambled letters. Features a beautiful custom brand identity with warm colors and friendly design, optimized for popular word games like Word Cookies.
 
 ## Features
 
@@ -17,6 +17,7 @@ A full-stack web application for solving word puzzles by finding all possible wo
 - **Smart Filtering**: Intelligent filtering to show only meaningful English words
 - **Configurable Length**: Set minimum word length to focus on desired words
 - **Fast & Modern**: Built with FastAPI + React TypeScript, fully containerized
+- **Beautiful Design**: Custom brand identity with warm colors and friendly typography
 
 ## Quick Start
 
