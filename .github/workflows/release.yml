@@ -185,7 +185,7 @@ jobs:
   security-scan-release:
     name: Security Scan Release
     runs-on: ubuntu-latest
-    needs: [build-and-push]
+    needs: [extract-version, build-and-push]
     
     strategy:
       matrix:
