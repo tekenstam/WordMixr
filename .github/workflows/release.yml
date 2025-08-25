@@ -61,7 +61,7 @@ jobs:
         
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Convert image name to lowercase
       id: image-name
@@ -110,7 +110,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -197,7 +197,7 @@ jobs:
         
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Convert image name to lowercase
       id: image-name
@@ -228,7 +228,7 @@ jobs:
       
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0  # Fetch full history for changelog generation
         
@@ -349,12 +349,12 @@ jobs:
       
     steps:
     - name: Download artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: release-artifacts
         
     - name: Download release notes
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: release-notes
         
@@ -377,7 +377,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Create docker-compose for release images
       run: |
