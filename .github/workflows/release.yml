@@ -61,7 +61,7 @@ jobs:
         
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Convert image name to lowercase
       id: image-name
@@ -110,15 +110,15 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         
     - name: Set up Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
@@ -174,7 +174,7 @@ jobs:
         sha256sum *.tar.gz > checksums.sha256
         
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: release-artifacts
         path: |
@@ -197,7 +197,7 @@ jobs:
         
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Convert image name to lowercase
       id: image-name
@@ -228,7 +228,7 @@ jobs:
       
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0  # Fetch full history for changelog generation
         
@@ -333,7 +333,7 @@ jobs:
         echo "EOF" >> $GITHUB_OUTPUT
         
     - name: Upload release notes
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: release-notes
         path: RELEASE_NOTES.md
@@ -349,12 +349,12 @@ jobs:
       
     steps:
     - name: Download artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v6
       with:
         name: release-artifacts
         
     - name: Download release notes
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v6
       with:
         name: release-notes
         
@@ -377,7 +377,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Create docker-compose for release images
       run: |
@@ -471,7 +471,7 @@ jobs:
       run: docker compose -f docker-compose.release.yml down
       
     - name: Upload performance report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: performance-report
         path: |
