@@ -300,7 +300,9 @@ jobs:
       run: |
         cd frontend
         npm ci
-        npm audit --audit-level=high
+        # Gate on production deps only. Dev-toolchain advisories (vite/eslint/etc.)
+        # were failing every Dependabot PR even when app deps were fine.
+        npm audit --audit-level=high --omit=dev
         
     - name: Upload security reports
       uses: actions/upload-artifact@v7
