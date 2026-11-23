@@ -5,7 +5,7 @@ pytest
 pytest-asyncio
 httpx
 pytest-cov
-black>=24.3.0
+black>=26.10.1
 isort
 flake8
 mypy
